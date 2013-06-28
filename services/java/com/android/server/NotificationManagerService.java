@@ -166,6 +166,7 @@ public class NotificationManagerService extends INotificationManager.Stub
 
     // for enabling and disabling notification pulse behavior
     private boolean mScreenOn = true;
+    private boolean mDreaming = false;
     private boolean mWasScreenOn = true;
     private boolean mInCall = false;
     private boolean mBatterySaverDisableLED = false;
@@ -1290,6 +1291,14 @@ public class NotificationManagerService extends INotificationManager.Stub
                 mScreenOn = false;
                 mWasScreenOn = true;
                 updateLightsLocked();
+            } else if (action.equals(Intent.ACTION_DREAMING_STARTED)) {
+                mDreaming = true;
+                updateNotificationPulse();
+            } else if (action.equals(Intent.ACTION_DREAMING_STOPPED)) {
+                mDreaming = false;
+                if (mScreenOn) {
+                    mNotificationLight.turnOff();
+                }
             } else if (action.equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
                 mInCall = (intent.getStringExtra(TelephonyManager.EXTRA_STATE).equals(
                         TelephonyManager.EXTRA_STATE_OFFHOOK));
@@ -1301,7 +1310,9 @@ public class NotificationManagerService extends INotificationManager.Stub
                 }
             } else if (action.equals(Intent.ACTION_USER_PRESENT)) {
                 // turn off LED when user passes through lock screen
-                mNotificationLight.turnOff();
+                if (!mDreaming) {
+                    mNotificationLight.turnOff();
+                }
             } else if (action.equals(Intent.ACTION_USER_SWITCHED)) {
                 // reload per-user settings
                 mSettingsObserver.update(null);
@@ -1489,6 +1500,8 @@ public class NotificationManagerService extends INotificationManager.Stub
         filter.addAction(Intent.ACTION_USER_PRESENT);
         filter.addAction(Intent.ACTION_USER_STOPPED);
         filter.addAction(Intent.ACTION_USER_SWITCHED);
+        filter.addAction(Intent.ACTION_DREAMING_STARTED);
+        filter.addAction(Intent.ACTION_DREAMING_STOPPED);
         mContext.registerReceiver(mIntentReceiver, filter);
         IntentFilter pkgFilter = new IntentFilter();
         pkgFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
@@ -1924,13 +1937,12 @@ public class NotificationManagerService extends INotificationManager.Stub
 
                     final int currentUser;
                     final long token = Binder.clearCallingIdentity();
-
                     try {
                         currentUser = ActivityManager.getCurrentUser();
                     } finally {
                         Binder.restoreCallingIdentity(token);
                     }
-                    
+
                     if (notification.icon != 0) {
                         if (old != null && old.statusBarKey != null) {
                             r.statusBarKey = old.statusBarKey;
@@ -1960,6 +1972,7 @@ public class NotificationManagerService extends INotificationManager.Stub
                         }
                         notifyPostedLocked(r);
                     } else {
+                        Slog.e(TAG, "Not posting notification with icon==0: " + notification);
                         if (old != null && old.statusBarKey != null) {
                             long identity = Binder.clearCallingIdentity();
                             try {
@@ -1970,6 +1983,10 @@ public class NotificationManagerService extends INotificationManager.Stub
                             }
                             notifyRemovedLocked(r);
                         }
+                        // ATTENTION: in a future release we will bail out here
+                        // so that we do not play sounds, show lights, etc. for invalid notifications
+                        Slog.e(TAG, "WARNING: In a future release this will crash the app: "
+                                + n.getPackageName());
                     }
 
                     // If we're not supposed to beep, vibrate, etc. then don't.
@@ -2410,7 +2427,7 @@ public class NotificationManagerService extends INotificationManager.Stub
 
         // Don't flash while we are in a call, screen is
         // on or we are in quiet hours with light dimmed
-        if (mBatterySaverDisableLED || mLedNotification == null || mInCall || mScreenOn
+        if (mBatterySaverDisableLED || mLedNotification == null || mInCall || (mScreenOn && !mDreaming)
                 || (QuietHoursHelper.inQuietHours(mContext, Settings.System.QUIET_HOURS_DIM))) {
             mNotificationLight.turnOff();
         } else if (mNotificationPulseEnabled) {

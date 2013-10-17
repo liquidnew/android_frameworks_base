@@ -94,6 +94,9 @@
     <!-- Active display -->
     <uses-permission android:name="android.permission.SYSTEM_NOTIFICATION_LISTENER" />
 
+    <!-- DownloadProvider -->
+    <uses-permission android:name="android.permission.ACCESS_ALL_DOWNLOADS" />
+
     <application
         android:persistent="true"
         android:allowClearUserData="false"

@@ -11513,4 +11513,10 @@ public class WindowManagerService extends IWindowManager.Stub
 
     }
     /** END SPLIT VIEW **/
+
+    /* @hide */
+    @Override
+    public void updateStatusBarNavBarHeight() {
+        mPolicy.updateStatusBarNavBarHeight();
+    }
 }

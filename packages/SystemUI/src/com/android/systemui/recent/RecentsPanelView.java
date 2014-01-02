@@ -1017,7 +1017,15 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         final PopupMenu popup =
             new PopupMenu(mContext, anchorView == null ? selectedView : anchorView);
         mPopup = popup;
-        popup.getMenuInflater().inflate(R.menu.recent_popup_menu, popup.getMenu());
+
+	int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_ENABLED, 0));
+
+	if(mHaloEnabled != 1){
+        	popup.getMenuInflater().inflate(R.menu.recent_popup_menu_split, popup.getMenu());
+	}else{
+		popup.getMenuInflater().inflate(R.menu.recent_popup_menu, popup.getMenu());
+	}
+
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.recent_remove_item) {

@@ -4461,6 +4461,12 @@ public final class Settings {
         public static final String LOCKSCREEN_NOTIFICATIONS_EXCLUDED_APPS = "lockscreen_notifications_excluded_apps";
 
         /**
+         * HALO color, default is 0xff33b5e5 (normal)
+         * @hide
+         */
+        public static final String HALO_COLOR = "halo_color";
+
+        /**
          * Set a custom notification background color
          * @hide
          */

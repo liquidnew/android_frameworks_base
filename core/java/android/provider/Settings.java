@@ -2479,6 +2479,12 @@ public final class Settings {
         public static final String MINIMUM_VIBRATION_DURATION = "minimum_vibration_duration";
 
         /**
+         * Adjust the vibration multiplier to control vibration strength
+         * @hide
+         */
+        public static final String VIBRATION_MULTIPLIER = "vibration_multiplier";
+
+        /**
          * @deprecated Each application that shows web suggestions should have its own
          * setting for this.
          */

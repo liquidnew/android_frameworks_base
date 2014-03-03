@@ -395,7 +395,6 @@ final class DisplayPowerController {
         public void onServiceDisconnected(ComponentName name) {
             mKeyguardService = null;
         }
-
     };
 
     /**
@@ -638,28 +637,7 @@ final class DisplayPowerController {
             }
 
             if (changed && !mPendingRequestChangedLocked) {
-                if ((mKeyguardService == null || !mKeyguardService.isShowing()) &&
-                            request.screenState == DisplayPowerRequest.SCREEN_STATE_OFF &&
-                            seeThrough && blurRadius > 0) {
-                    DisplayInfo di = mDisplayManager
-                            .getDisplayInfo(mDisplayManager.getDisplayIds() [0]);
-                    /* Limit max screenshot capture layer to 22000.
-                       Prevents status bar and navigation bar from being captured.*/ 
-                    Bitmap bmp = SurfaceControl
-                            .screenshot(di.getNaturalWidth(),di.getNaturalHeight(), 0, 22000);
-                    if (bmp != null) {
-                        Bitmap tmpBmp = bmp;
-
-                        // scale image if its too large
-                        if (bmp.getWidth() > MAX_BLUR_WIDTH) {
-                            tmpBmp = Bitmap.createScaledBitmap(bmp, MAX_BLUR_WIDTH, MAX_BLUR_HEIGHT, true);
-                        }
-
-                        mKeyguardService.setBackgroundBitmap(tmpBmp);
-                        bmp.recycle();
-                        tmpBmp.recycle();
-                    }
-                }
+                initSeeThrough(request);
                 mPendingRequestChangedLocked = true;
                 sendUpdatePowerStateLocked();
             }
@@ -1195,7 +1173,6 @@ final class DisplayPowerController {
                             + ", mAmbientLux=" + mAmbientLux);
                 }
             }
-
             long debounceTime = mDebounceLuxTime + debounceDelay;
 
             if (time >= debounceTime) {

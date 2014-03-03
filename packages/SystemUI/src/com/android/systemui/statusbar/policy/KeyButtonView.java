@@ -43,8 +43,8 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageView;
 
 import com.android.internal.statusbar.IStatusBarService;
-import com.android.internal.util.slim.ButtonsConstants;
-import com.android.internal.util.slim.SlimActions;
+import com.android.internal.util.liquid.ButtonsConstants;
+import com.android.internal.util.liquid.LiquidActions;
 
 import com.android.systemui.R;
 
@@ -81,7 +81,7 @@ public class KeyButtonView extends ImageView {
             if (isPressed()) {
                 sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
                 if (mLongpressAction != null
-                    && SlimActions.isActionKeyEvent(mLongpressAction)) {
+                    && LiquidActions.isActionKeyEvent(mLongpressAction)) {
                     setHapticFeedbackEnabled(false);
                 }
                 performLongClick();
@@ -315,7 +315,7 @@ public class KeyButtonView extends ImageView {
                 if (!mIsLongpressed) {
                     if (isPressed()) {
                         if (mClickAction != null
-                            && !SlimActions.isActionKeyEvent(mClickAction)) {
+                            && !LiquidActions.isActionKeyEvent(mClickAction)) {
                             performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                         }
                         performClick();
@@ -339,7 +339,7 @@ public class KeyButtonView extends ImageView {
                     && !mClickAction.equals(ButtonsConstants.ACTION_RECENTS)) {
                 cancelPreloadRecentApps();
             }
-            SlimActions.processAction(mContext, mClickAction, false);
+            LiquidActions.processAction(mContext, mClickAction, false);
             return;
         }
     };
@@ -351,7 +351,7 @@ public class KeyButtonView extends ImageView {
                     && !mLongpressAction.equals(ButtonsConstants.ACTION_RECENTS)) {
                 cancelPreloadRecentApps();
             }
-            SlimActions.processAction(mContext, mLongpressAction, true);
+            LiquidActions.processAction(mContext, mLongpressAction, true);
             return true;
         }
     };

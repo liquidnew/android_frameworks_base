@@ -327,6 +327,13 @@ interface IWindowManager
      */
     void toggleStatusBar();
 
+    /**
+     * Get current system ui visibility mode.
+     *
+     * @hide
+     */
+    int getSystemUIVisibility();
+
     /** SPLIT VIEW **/
     boolean isTaskSplitView(int taskId);
     void setTaskSplitView(int taskId, boolean split);

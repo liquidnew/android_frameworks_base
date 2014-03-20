@@ -1396,9 +1396,7 @@
            16 - App switch
            32 - Camera
         For example, a device with Home, Back and Menu keys would set this
-        config to 7. -->    <!-- Indicates that the device has Single-stage Camera key
-         (without "Focus" state) instead of Dual-stage. -->
-    <bool name="config_singleStageCameraKey">false</bool>
+        config to 7. -->
     <integer name="config_deviceHardwareKeys">0</integer>
 
     <!-- Integer to configure panel auto brightness mode when changed -->
@@ -1414,7 +1412,8 @@
     <string name="config_perf_profile_prop">sys.perf.profile</string>
     <string name="config_perf_profile_default_entry">1</string>
 
-    <!-- Set to empty string to disable. Can be added to device overlay for device-specific path -->
-    <string name="config_fastChargePath" translatable="false">/sys/kernel/fast_charge/force_fast_charge</string>
+    <!-- Indicates that the device has Single-stage Camera key
+         (without "Focus" state) instead of Dual-stage. -->
+    <bool name="config_singleStageCameraKey">false</bool>
 
 </resources>

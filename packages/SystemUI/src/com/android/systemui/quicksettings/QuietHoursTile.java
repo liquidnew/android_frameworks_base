@@ -33,12 +33,6 @@ import com.android.systemui.statusbar.phone.QuickSettingsController;
 
 public class QuietHoursTile extends QuickSettingsTile {
 
-<<<<<<< HEAD
-=======
-    private static final String SCHEDULE_SERVICE_COMMAND =
-            "com.android.settings.liquid.service.SCHEDULE_SERVICE_COMMAND";
-
->>>>>>> 1d52ae6... Refactor framework resources and liquify imports
     private boolean mEnabled;
 
     public QuietHoursTile(Context context, QuickSettingsController qsc) {

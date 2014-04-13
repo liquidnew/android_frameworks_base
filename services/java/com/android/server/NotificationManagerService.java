@@ -171,6 +171,7 @@ public class NotificationManagerService extends INotificationManager.Stub
 
     // for enabling and disabling notification pulse behavior
     private boolean mScreenOn = true;
+    private boolean mScreenOnNotificationLed = false;
     private boolean mDreaming = false;
     private boolean mWasScreenOn = true;
     private boolean mInCall = false;
@@ -1450,8 +1451,10 @@ public class NotificationManagerService extends INotificationManager.Stub
                 }
             } else if (action.equals(Intent.ACTION_USER_PRESENT)) {
                 // turn off LED when user passes through lock screen
-                if (!mDreaming) {
-                    mNotificationLight.turnOff();
+                if (!mDreaming && !mScreenOnNotificationLed) {
+                    if (mLedNotification == null || !isLedNotificationForcedOn) {
+                        mNotificationLight.turnOff();
+                    }
                 }
             } else if (action.equals(Intent.ACTION_USER_SWITCHED)) {
                 // reload per-user settings
@@ -1511,7 +1514,14 @@ public class NotificationManagerService extends INotificationManager.Stub
                     Settings.System.QUIET_HOURS_DIM),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.Global.getUriFor(
-                    Settings.Global.BATTERY_SAVER_LED_DISABLE), false, this, UserHandle.USER_ALL);
+                    Settings.Global.BATTERY_SAVER_LED_DISABLE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Global.getUriFor(
+                    Settings.System.NOTIFICATION_LIGHT_PULSE_CUSTOM_VALUES),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SCREEN_ON_NOTIFICATION_LED),
+                    false, this, UserHandle.USER_ALL);
             update(null);
         }
 
@@ -1550,6 +1560,11 @@ public class NotificationManagerService extends INotificationManager.Stub
                 parseNotificationPulseCustomValuesString(Settings.System.getStringForUser(resolver,
                         Settings.System.NOTIFICATION_LIGHT_PULSE_CUSTOM_VALUES, UserHandle.USER_CURRENT));
             }
+
+            // LED screen on notification
+            mScreenOnNotificationLed = Settings.System.getIntForUser(resolver,
+                    Settings.System.SCREEN_ON_NOTIFICATION_LED, 0,
+                    UserHandle.USER_CURRENT) == 1;
 
             if (uri == null || ENABLED_NOTIFICATION_LISTENERS_URI.equals(uri)) {
                 rebindListenerServices();
@@ -2569,7 +2584,8 @@ public class NotificationManagerService extends INotificationManager.Stub
 
         // Don't flash while we are in a call, screen is
         // on or we are in quiet hours with light dimmed
-        if (mBatterySaverDisableLED || mLedNotification == null || mInCall || (mScreenOn && !mDreaming)
+        if (mBatterySaverDisableLED || mLedNotification == null || mInCall
+                || (mScreenOn && (!mDreaming || !mScreenOnNotificationLed))
                 || (QuietHoursHelper.inQuietHours(mContext, Settings.System.QUIET_HOURS_DIM))) {
             mNotificationLight.turnOff();
         } else if (mNotificationPulseEnabled) {

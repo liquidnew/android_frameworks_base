@@ -34,6 +34,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.content.ServiceConnection;
 import android.database.ContentObserver;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
@@ -155,6 +156,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     // Recents toggle controller
     private RecentController slimRecents;
     private RecentsComponent stockRecents;
+
+    private boolean mShowNotificationCounts;
 
     protected int mLayoutDirection = -1; // invalid
     private Locale mLocale;
@@ -518,7 +521,6 @@ public abstract class BaseStatusBar extends SystemUI implements
                 mNotificationBlamePopup.getMenuInflater().inflate(
                         R.menu.notification_popup_menu,
                         mNotificationBlamePopup.getMenu());
-                mNotificationBlamePopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
                 MenuItem hideIconCheck = mNotificationBlamePopup.getMenu().findItem(R.id.notification_hide_icon_packages);
                 if(hideIconCheck != null) {
@@ -529,6 +531,8 @@ public abstract class BaseStatusBar extends SystemUI implements
                     }
                 }
 
+                mNotificationBlamePopup
+                .setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.notification_inspect_item) {
                             startApplicationDetailsActivity(packageNameF);

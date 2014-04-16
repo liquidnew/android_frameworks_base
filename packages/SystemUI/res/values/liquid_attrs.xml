@@ -31,6 +31,7 @@
         <attr name="round_background" format="boolean" />
         <attr name="is_oval" format="boolean" />
         <attr name="android:scaleType" />
+    </declare-styleable>
 
     <!-- Quick ribbons -->
     <declare-styleable name="QuickSettingsContainer">

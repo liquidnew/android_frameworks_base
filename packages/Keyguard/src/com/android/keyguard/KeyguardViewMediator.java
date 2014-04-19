@@ -109,9 +109,6 @@ public class KeyguardViewMediator {
     private static final String DELAYED_KEYGUARD_ACTION =
         "com.android.internal.policy.impl.PhoneWindowManager.DELAYED_KEYGUARD";
 
-    private static final String DISMISS_KEYGUARD_SECURELY_ACTION =
-            "com.android.keyguard.action.DISMISS_KEYGUARD_SECURELY";
-
     private static final String SHAKE_SECURE_TIMER =
         "com.android.keyguard.SHAKE_SECURE_TIMER";
 
@@ -532,10 +529,6 @@ public class KeyguardViewMediator {
         mUserManager = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
         mShowKeyguardWakeLock = mPM.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "show keyguard");
         mShowKeyguardWakeLock.setReferenceCounted(false);
-
-        mContext.registerReceiver(mBroadcastReceiver, new IntentFilter(DELAYED_KEYGUARD_ACTION));
-        mContext.registerReceiver(mBroadcastReceiver, new IntentFilter(DISMISS_KEYGUARD_SECURELY_ACTION),
-                android.Manifest.permission.CONTROL_KEYGUARD, null);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(SHAKE_SECURE_TIMER);
@@ -1100,10 +1093,6 @@ public class KeyguardViewMediator {
                         mSuppressNextLockSound = true;
                         doKeyguardLocked(null);
                     }
-                }
-            } else if (DISMISS_KEYGUARD_SECURELY_ACTION.equals(intent.getAction())) {
-                synchronized (KeyguardViewMediator.this) {
-                    dismiss();
                 }
             } else if (SHAKE_SECURE_TIMER.equals(intent.getAction())) {
                 if (mLockPatternUtils.isSecure()) {

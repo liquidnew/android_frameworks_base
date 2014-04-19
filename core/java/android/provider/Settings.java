@@ -4554,12 +4554,6 @@ public final class Settings {
         public static final String CUSTOM_RECENT_TOGGLE = "custom_recent_toggle";
 
         /**
-         * Show brightness slider in notification panel
-         * @hide
-         */
-        public static final String NOTIFICATION_BRIGHTNESS_SLIDER = "notification_brightness_slider";
-
-        /**
          * The alpha value of the On-The-Go overlay.
          *
          * @hide

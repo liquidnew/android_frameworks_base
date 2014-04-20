@@ -976,13 +976,12 @@ public class InputMethodService extends AbstractInputMethodService {
         boolean fullScreenOverride = Settings.System.getIntForUser(getContentResolver(),
                 Settings.System.DISABLE_FULLSCREEN_KEYBOARD, 0,
                 UserHandle.USER_CURRENT_OR_SELF) != 0;
-        boolean isFullscreen;
-        if (fullScreenOverride) {
-            isFullscreen = false;
-        } else {
-		    int mHaloEnabled = (Settings.System.getInt(getContentResolver(), Settings.System.HALO_ENABLED, 0));
-            isFullscreen = (mHaloEnabled != 1) ? (onEvaluateFullscreenMode() || onEvaluateSplitView()) : mShowInputRequested && onEvaluateFullscreenMode();
-        }
+
+		int mHaloEnabled = (Settings.System.getInt(
+                getContentResolver(), Settings.System.HALO_ENABLED, 0));
+
+        boolean isFullscreen = (mHaloEnabled != 1) ? (onEvaluateFullscreenMode()
+                || onEvaluateSplitView()) : mShowInputRequested && onEvaluateFullscreenMode();
 
         boolean changed = mLastShowInputRequested != mShowInputRequested;
         if (mIsFullscreen != isFullscreen || !mFullscreenApplied) {
